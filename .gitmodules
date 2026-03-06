@@ -1,0 +1,6 @@
+[submodule "bonfire-backend"]
+	path = bonfire-backend
+	url = ./bonfire-backend/
+[submodule "bonfire-frontend"]
+	path = bonfire-frontend
+	url = ./bonfire-frontend/
