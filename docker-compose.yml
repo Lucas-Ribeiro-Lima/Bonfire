@@ -33,6 +33,7 @@ services:
       - ./bonfire-backend/Logs:/app/Logs
 
   db:
+    container_name: bonfire-db
     image: mariadb
     restart: always
     environment:
@@ -42,6 +43,8 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - ./db:/var/lib/mysql      
+    networks:
+      - network
 
   keycloak:
     container_name: keycloak-app
@@ -51,8 +54,28 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB_URL=jdbc:postgresql://keycloak_db:5432/keycloak
+      - KC_DB=postgres
+      - KC_DB_USERNAME=${KEYCLOAK_DB_USER}
+      - KC_DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
     ports:
       - 5050:8080
+    networks:
+      - network
+
+  keycloak_db:
+    container_name: keycloak_db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${KEYCLOAK_DB_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      POSTGRES_PORT: 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - network
 
 networks:
   network:
